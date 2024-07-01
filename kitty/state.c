@@ -913,7 +913,7 @@ PYWRAP1(change_background_opacity) {
     PA("Kf", &os_window_id, &opacity);
     WITH_OS_WINDOW(os_window_id)
         os_window->background_opacity = opacity;
-        os_window->is_damaged = true;
+        if (!os_window->redraw_count) os_window->redraw_count++;
         Py_RETURN_TRUE;
     END_WITH_OS_WINDOW
     Py_RETURN_FALSE;
@@ -985,6 +985,7 @@ PYWRAP1(set_os_window_title) {
     PyObject *title;
     PA("KU", &os_window_id, &title);
     WITH_OS_WINDOW(os_window_id)
+        if (os_window->disallow_title_changes) break;
         if (PyUnicode_GetLength(title)) {
             os_window->title_is_overriden = true;
             Py_XDECREF(os_window->window_title);
@@ -1123,7 +1124,7 @@ PYWRAP0(apply_options_update) {
         OSWindow *os_window = global_state.os_windows + o;
         get_platform_dependent_config_values(os_window->handle);
         os_window->background_opacity = OPT(background_opacity);
-        os_window->is_damaged = true;
+        if (!os_window->redraw_count) os_window->redraw_count++;
         for (size_t t = 0; t < os_window->num_tabs; t++) {
             Tab *tab = os_window->tabs + t;
             for (size_t w = 0; w < tab->num_windows; w++) {
