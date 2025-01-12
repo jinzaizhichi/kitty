@@ -407,10 +407,15 @@ Note that *all* keys are reported as escape codes, including :kbd:`Enter`,
 Report associated text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This progressive enhancement (``0b10000``) causes key events that generate text
-to be reported as ``CSI u`` escape codes with the text embedded in the escape
-code. See :ref:`text_as_codepoints` above for details on the mechanism.
-
+This progressive enhancement (``0b10000``) additionally causes key events that
+generate text to be reported as ``CSI u`` escape codes with the text embedded
+in the escape code. See :ref:`text_as_codepoints` above for details on the
+mechanism. Note that this enhancement also causes all key events to be encoded
+in escape code form, regardless of whether they have associated text or not,
+and as a side effect all key events are disambiguated automatically, making
+this enhancement a superset of :ref:`disambiguate`. The reason for this is is
+that there is no usecase for reporting text using escape codes but non text
+keys in legacy formats.
 
 .. _detection:
 
